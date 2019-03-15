@@ -1,0 +1,25 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Books List</h1>
+
+    {% if book_list %}
+    <ul>
+
+      {% for book in book_list %}
+      <li>
+        <a href="{{ book.get_absolute_url }}">{{ book.title }}</a> ({{book.author}})
+        {% if user.is_staff or user.groups.all.0.name == 'Librarians' %}
+        <table><tr>
+          <td><form action="{% url 'book_update' book.pk %}"> <input type="submit" value="Update" /></form></td>
+          <td><form action="{% url 'book_delete' book.pk %}"> <input type="submit" value="Delete" /></form></td>
+        </tr></table>
+        {% endif %}
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no books in the library.</p>
+    {% endif %}
+{% endblock %}

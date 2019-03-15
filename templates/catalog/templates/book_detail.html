@@ -1,0 +1,31 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Title: {{ book.title }}</h1>
+
+  <p><strong>Author:</strong> <a href="{% url 'author-detail' book.author.pk %}"> {{ book.author }}</a></p>
+  <p><strong>Summary:</strong> {{ book.summary }}</p>
+  <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+  <p><strong>Language:</strong> {{ book.language }}</p>
+  <p><strong>Genre:</strong> {% for genre in book.genre.all %} {{ genre }}{% if not forloop.last %},{% endif %}{% endfor %}</p>
+
+  <div style="margin-left:20px;margin-top:20px">
+    <h4>Copies</h4>
+
+
+
+
+    {% for copy in book.bookinstance_set.all %}
+
+    <!--
+    bookinstance_set создан, потому что вы, на стороне "многим" данной связи, объявили поле ForeignKey (один-ко многим). Поскольку вы ничего не объявили на другой стороне ("один") данной модели (то есть, модель Book "ничего не знает" про модель BookInstance), то она не имеет никакой возможности (по умолчанию) для получения множества соответствующих записей. Для того, чтобы обойти эту проблему, Django конструирует соответствующую функцию "обратного просмотра" ("reverse lookup"), которой вы можете воспользоваться. Имя данной функции создается в нижнем регистре и состоит из имени модели, в которой был объявлен ForeignKey (то есть, bookinstance), за которым следует _set (то есть функция, созданная для Book будет иметь вид bookinstance_set()).
+      -->
+
+    <hr>
+    <p class="{% if copy.status == 'a' %}text-success{% elif copy.status == 'd' %}text-danger{% else %}text-warning{% endif %}">{{ copy.get_status_display }}</p>
+    {% if copy.status != 'a' %}<p><strong>Due to be returned:</strong> {{copy.due_back}}</p>{% endif %}
+    <p><strong>Imprint:</strong> {{copy.imprint}}</p>
+    <p class="text-muted"><strong>Id:</strong> {{copy.id}}</p>
+    {% endfor %}
+  </div>
+{% endblock %}

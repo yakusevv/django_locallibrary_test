@@ -1,0 +1,25 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Authors List</h1>
+
+    {% if author_list %}
+    <ul>
+
+      {% for author in author_list %}
+      <li>
+        <a href="{{ author.get_absolute_url }}">{{ author.last_name }} {{ author.first_name}} ({{author.date_of_birth}} - {% if author.date_of_death %}{{author.date_of_death}}{% endif %})</a>
+        {% if user.is_staff or user.groups.all.0.name == 'Librarians' %}
+        <table><tr>
+          <td><form action="{% url 'author_update' author.pk %}"> <input type="submit" value="Update" /></form></td>
+          <td><form action="{% url 'author_delete' author.pk %}"> <input type="submit" value="Delete" /></form></td>
+        </tr></table>
+        {% endif %}
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no authors in the library.</p>
+    {% endif %}
+{% endblock %}
